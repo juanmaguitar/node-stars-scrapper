@@ -1,27 +1,26 @@
-let express = require('express');
 let rp = require('request-promise');
+let fs = require('fs');
+const util = require('util')
 
 let getMainObject = require('./handlers/getMainObject')
 let getDetailsPages = require('./handlers/getDetailsPages')
 
-let app = express();
-let PORT = process.env.PORT || '8081';
+let start = (new Date()).getTime();
+let urlBase = "https://in-the-sky.org/newscalyear.php?year=2016&maxdiff=1"
+let limitDetailPages = process.env.LIMIT || 0;
+var outputFile = 'data.json';
 
-app.get('/stars/visible-naked-eye', ( req, res ) => {
+rp(urlBase)
+	.then ( getMainObject.bind(null, limitDetailPages) )
+	.then ( getDetailsPages )
+	.then ( (data) => {
+		require('./helpers/showTime')(start);
+		console.dir( data, {depth: null, colors: true})
 
-	let start = (new Date()).getTime();
-	let urlBase = "https://in-the-sky.org/newscalyear.php?year=2016&maxdiff=1"
-	let limitDetailPages = (req.query && req.query.limit) ? req.query.limit : 0;
+		fs.writeFile(outputFile, JSON.stringify(data, null, 4), function(err) {
+		    if (err) throw (err);
+		    console.log("💾 data saved in " + outputFile);
+		});
 
-	rp(urlBase)
-		.then ( getMainObject.bind(null, limitDetailPages) )
-		.then ( getDetailsPages )
-		.then ( (data) => {
-			require('./helpers/showTime')(start);
-			res.json(data);
-		})
-		.catch( (error) =>  console.log ("⚡️ Ups!!", error) )
-
-})
-
-app.listen(PORT, () => console.log('Magic happens on port ' + PORT) );
+	})
+	.catch( (error) =>  console.log ("⚡️ Ups!!", error) )
