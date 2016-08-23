@@ -4,7 +4,7 @@
   "description": "Scrape le web.",
   "scripts": {
     "dev": "nodemon index.js --exec babel-node --presets es2015,stage-2",
-    "start": "nodemon index.js"
+    "start": "node index.js"
   },
   "main": "server.js",
   "author": "Scotch",
