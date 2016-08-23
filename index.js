@@ -1,7 +1,6 @@
 var express = require('express');
 var request = require('request');
 var cheerio = require('cheerio');
-var cors = require('cors');
 var path = require('path');
 var rp = require('request-promise');
 var Promise = require('promise');
@@ -13,7 +12,7 @@ var app = express();
 
 var publicFolder = path.join(__dirname, 'public');
 
-app.get('/stars/visible-naked-eye', cors(), function( req, res ) {
+app.get('/stars/visible-naked-eye', function( req, res ) {
 
 	start = (new Date()).getTime();
 	var urlBase = "https://in-the-sky.org/newscalyear.php?year=2016&maxdiff=1"
